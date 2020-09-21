@@ -2,7 +2,7 @@
 #define DETECTOR_H
 
 #include "vector"
-#include "../module/logic.h"
+#include "../model/logic.h"
 
 class Controller {
  public:
