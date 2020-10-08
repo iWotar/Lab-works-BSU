@@ -16,7 +16,7 @@ public class MainView {
     private Bag bag = null;
 
     public MainView() {
-        JFrame frame = new JFrame("Simple Example");
+        JFrame frame = new JFrame("Lab 2");
         frame.setBounds(100, 100, 400, 400);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
