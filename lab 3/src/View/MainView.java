@@ -10,7 +10,6 @@ import java.util.Vector;
 import javax.swing.*;
 
 public class MainView {
-
     private final JLabel label = new JLabel();
     private final JLabel cap_label = new JLabel();
     private Bag bag = null;
@@ -22,25 +21,135 @@ public class MainView {
         frame.setVisible(true);
 
         JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
-        JPanel button_panel = new JPanel();
-        button_panel.setLayout(new GridLayout(1, 2));
-
         frame.add(panel);
+        formMainPanel(panel);
 
+        JMenuBar menuBar = new JMenuBar();
+        frame.setJMenuBar(menuBar);
+        formMenuBar(menuBar);
+
+        frame.revalidate();
+    }
+
+    private void formMenuBar(JMenuBar menuBar) {
+        JMenu file = new JMenu("file");
+        file.setMnemonic('f');
+        JMenu info = new JMenu("info");
+        info.setMnemonic('i');
+
+        JMenuItem save = new JMenuItem("save");
+        save.setMnemonic('s');
+        JMenuItem load = new JMenuItem("load");
+        load.setMnemonic('l');
+        JMenuItem exit = new JMenuItem("exit");
+        exit.setMnemonic('e');
+
+        file.add(save);
+        file.add(load);
+        file.addSeparator();
+        file.add(exit);
+
+        tuneFileMenu(file);
+
+        JMenuItem help = new JMenuItem("help");
+        help.setMnemonic('h');
+        JMenuItem about = new JMenuItem("about");
+        about.setMnemonic('a');
+
+        info.add(help);
+        info.add(about);
+
+        tuneInfoMenu(info);
+
+        menuBar.add(file);
+        menuBar.add(info);
+    }
+
+    private void tuneInfoMenu(JMenu info) {
+        int n = info.getItemCount();
+        JMenuItem element;
+        for (int i = 0; i < n; i++) {
+            element = info.getItem(i);
+            if (element == null) {
+                continue;
+            }
+            switch (element.getText()) {
+                case ("help") -> element.addActionListener(new AbstractAction() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        helpProcessing();
+                    }
+                });
+                case ("about") -> element.addActionListener(new AbstractAction() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        aboutProcessing();
+                    }
+                });
+                default -> System.out.println("untreated JMenuItem");
+            }
+        }
+    }
+
+    private void aboutProcessing() {
+        System.out.println("about");
+    }
+
+    private void helpProcessing() {
+        System.out.println("help");
+    }
+
+    private void tuneFileMenu(JMenu file) {
+        int n = file.getItemCount();
+        JMenuItem element;
+        for (int i = 0; i < n; i++) {
+            element = file.getItem(i);
+            if (element == null) {
+                continue;
+            }
+            switch (element.getText()) {
+                case ("save") -> element.addActionListener(new AbstractAction() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        saveProcessing();
+                    }
+                });
+                case ("load") -> element.addActionListener(new AbstractAction() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        loadProcessing();
+                    }
+                });
+                case ("exit") -> element.addActionListener(new AbstractAction() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        exitProcessing();
+                    }
+                });
+                default -> System.out.println("untreated JMenuItem");
+            }
+        }
+    }
+
+    private void exitProcessing() {
+        System.out.println("exit");
+        System.exit(0);
+    }
+
+    private void loadProcessing() {
+        System.out.println("load");
+    }
+
+    private void saveProcessing() {
+        System.out.println("save");
+    }
+
+    private void formMainPanel(JPanel panel) {
         JButton add_shape = new JButton("Add shape");
         add_shape.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int optionDialog = JOptionPane.showOptionDialog(panel, "Выберите вид: ",
-                        "Adding shape", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
-                        null, new String[]{"Cube", "Pyramid", "Sphere"}, "Cube");
-                switch (optionDialog) {
-                    case (0) -> takeShapeInput(panel, ShapeType.CUBE);
-                    case (1) -> takeShapeInput(panel, ShapeType.PYRAMID);
-                    case (2) -> takeShapeInput(panel, ShapeType.SPHERE);
-                }
-
+                addProcessing(panel);
             }
         });
 
@@ -51,6 +160,10 @@ public class MainView {
                 delShapeIndexes(panel);
             }
         });
+
+        panel.setLayout(new BorderLayout());
+        JPanel button_panel = new JPanel();
+        button_panel.setLayout(new GridLayout(1, 2));
 
         button_panel.add(add_shape);
         button_panel.add(delete_shape);
@@ -65,8 +178,17 @@ public class MainView {
         forText.add(scrollPane, BorderLayout.CENTER);
 
         panel.add(forText);
+    }
 
-        frame.revalidate();
+    private void addProcessing(JPanel panel) {
+        int optionDialog = JOptionPane.showOptionDialog(panel, "Выберите вид: ",
+                "Adding shape", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE,
+                null, new String[]{"Cube", "Pyramid", "Sphere"}, "Cube");
+        switch (optionDialog) {
+            case (0) -> takeShapeInput(panel, ShapeType.CUBE);
+            case (1) -> takeShapeInput(panel, ShapeType.PYRAMID);
+            case (2) -> takeShapeInput(panel, ShapeType.SPHERE);
+        }
     }
 
     private void delShapeIndexes(JPanel panel) {
