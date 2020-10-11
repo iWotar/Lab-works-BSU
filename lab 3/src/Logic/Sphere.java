@@ -9,6 +9,7 @@ public class Sphere implements Shape {
     public Sphere(double rad) {
         this.rad = rad;
     }
+    public Sphere(Vector<Double> sizes){ rad = sizes.get(0); }
 
     @Override
     public double volume() {
@@ -29,6 +30,11 @@ public class Sphere implements Shape {
 
     @Override
     public String getSize() {
+        return String.valueOf(rad);
+    }
+
+    @Override
+    public String sizeInfo() {
         return "радиус = " + rad;
     }
 }

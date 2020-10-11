@@ -138,10 +138,13 @@ public class MainView {
 
     private void loadProcessing() {
         System.out.println("load");
+        bag.load();
+        newData();
     }
 
     private void saveProcessing() {
         System.out.println("save");
+        bag.save();
     }
 
     private void formMainPanel(JPanel panel) {

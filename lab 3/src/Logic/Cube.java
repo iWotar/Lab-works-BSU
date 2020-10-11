@@ -10,6 +10,8 @@ public class Cube implements Shape {
         this.size = size;
     }
 
+    public Cube(Vector<Double> sizes){this.size = sizes.get(0);}
+
     @Override
     public double volume() {
         return Math.pow(size, 3);
@@ -32,6 +34,11 @@ public class Cube implements Shape {
 
     @Override
     public String getSize() {
+        return String.valueOf(size);
+    }
+
+    @Override
+    public String sizeInfo() {
         return "сторона = " + size;
     }
 

@@ -7,4 +7,5 @@ public interface Shape {
     Vector<Vector<Integer>> printData(); // Это для рисования для будущих версий
     String getType();
     String getSize();
+    String sizeInfo();
 }

@@ -11,6 +11,10 @@ public class Pyramid implements Shape {
         this.platf = platf;
         this.height = height;
     }
+    public Pyramid(Vector<Double> sizes) {
+        platf = sizes.get(0);
+        height = sizes.get(1);
+    }
 
     @Override
     public double volume() {
@@ -33,6 +37,11 @@ public class Pyramid implements Shape {
 
     @Override
     public String getSize() {
+        return height + ", " + platf;
+    }
+
+    @Override
+    public String sizeInfo() {
         return "высота = " + height + ", основание = " + platf;
     }
 }
