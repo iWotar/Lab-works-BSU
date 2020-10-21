@@ -7,7 +7,10 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.Arrays;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class MainView {
     private final JLabel label = new JLabel();
@@ -77,13 +80,13 @@ public class MainView {
                 case ("help") -> element.addActionListener(new AbstractAction() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        helpProcessing();
+                        helpProcessing(info);
                     }
                 });
                 case ("about") -> element.addActionListener(new AbstractAction() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        aboutProcessing();
+                        aboutProcessing(info);
                     }
                 });
                 default -> System.out.println("untreated JMenuItem");
@@ -91,12 +94,12 @@ public class MainView {
         }
     }
 
-    private void aboutProcessing() {
-        System.out.println("about");
+    private void aboutProcessing(JMenu info) {
+        JOptionPane.showMessageDialog(info, "Приложение для работы с массивом фигур.\n\n v0.2");
     }
 
-    private void helpProcessing() {
-        System.out.println("help");
+    private void helpProcessing(JMenu info) {
+        JOptionPane.showMessageDialog(info, "Приложение позволяет добавлять, удалять, сохранять и загружать фигуры.");
     }
 
     private void tuneFileMenu(JMenu file) {
@@ -111,13 +114,13 @@ public class MainView {
                 case ("save") -> element.addActionListener(new AbstractAction() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        saveProcessing();
+                        saveProcessing(file);
                     }
                 });
                 case ("load") -> element.addActionListener(new AbstractAction() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        loadProcessing();
+                        loadProcessing(file);
                     }
                 });
                 case ("exit") -> element.addActionListener(new AbstractAction() {
@@ -136,15 +139,45 @@ public class MainView {
         System.exit(0);
     }
 
-    private void loadProcessing() {
+    private void loadProcessing(JMenu file) {
         System.out.println("load");
-        bag.load();
-        newData();
+
+        String path = getPath(file);
+        if (!path.isEmpty()){
+            bag.load(path);
+            newData();
+        }
     }
 
-    private void saveProcessing() {
-        System.out.println("save");
-        bag.save();
+    private String getPath(JMenu file) {
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                "Source (.xml)", "xml");
+        JFileChooser fileChooser = new JFileChooser(".\\res");
+        fileChooser.setFileFilter(filter);
+        fileChooser.setDialogTitle("Сохранение файла");
+        // Определение режима - только файл
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        int result = fileChooser.showSaveDialog(file);
+        String path = "";
+        if (result == JFileChooser.APPROVE_OPTION ) {
+            path = fileChooser.getSelectedFile().getPath();
+            if (!path.matches(".*\\.(xml)")) {
+                Pattern p = Pattern.compile(".+[^.]");
+                Matcher m = p.matcher(path);
+                if (m.find()) {
+                    path = path.substring(m.start(), m.end());
+                    path = path.concat(".xml");
+                }
+            }
+        }
+        return path;
+    }
+
+    private void saveProcessing(JMenu file) {
+        String path = getPath(file);
+        if (!path.isEmpty()) {
+            bag.save(path);
+        }
     }
 
     private void formMainPanel(JPanel panel) {

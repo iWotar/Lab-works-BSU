@@ -15,7 +15,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
+import java.net.URLEncoder;
 import java.util.Vector;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Bag {
@@ -27,11 +29,11 @@ public class Bag {
         return curCapacity;
     }
 
-    public void save() {
+    public void save(String path) {
         try {
-            FileWriter fw = new FileWriter("res\\data.xml");
+            FileWriter fw = new FileWriter(path);
             fw.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
-                    "<ShapeCatalogue>\n" +
+                    "<ShapeCatalogue xmlns:xsd=\"http://www.w3.org/2001/XMLSchema-instance\" xsd:noNamespaceSchemaLocation=\"valid.xsd\">\n" +
                     "</ShapeCatalogue>");
             fw.close();
         } catch (IOException e) {
@@ -39,17 +41,34 @@ public class Bag {
         }
         try {
             DocumentBuilder docbuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            Document doc = docbuilder.parse("res\\data.xml");
-
+            Document doc = docbuilder.parse(utf8url(path));
             for (Shape shape : content) {
-                saveShape(doc, shape);
+                saveShape(doc, shape, path);
             }
         } catch (ParserConfigurationException | SAXException | IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void saveShape(Document doc, Shape shape) {
+    private String utf8url(String path) {
+        Pattern p = Pattern.compile("[А-Яа-я]+");
+        Matcher m = p.matcher(path);
+        while(m.find()) {
+            String incor = path.substring(m.start(), m.end());
+            String cor = "";
+            try {
+                cor = URLEncoder.encode(incor, "utf-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            path = path.replace(incor, cor);
+            m = p.matcher(path);
+        }
+
+        return path;
+    }
+
+    private void saveShape(Document doc, Shape shape, String path) {
         Element root = doc.getDocumentElement();
         Element sh_node = doc.createElement("Shape");
         sh_node.setAttribute("type", shape.getType());
@@ -57,14 +76,14 @@ public class Bag {
 
         root.appendChild(sh_node);
 
-        writeDoc(doc);
+        writeDoc(doc, path);
     }
 
-    private void writeDoc(Document doc) {
+    private void writeDoc(Document doc, String path) {
         try {
             Transformer tr = TransformerFactory.newInstance().newTransformer();
             DOMSource domSource = new DOMSource(doc);
-            FileOutputStream fos = new FileOutputStream("res\\data.xml");
+            FileOutputStream fos = new FileOutputStream(path);
 
             StreamResult sr = new StreamResult(fos);
             tr.transform(domSource, sr);
@@ -73,10 +92,10 @@ public class Bag {
         }
     }
 
-    public void load() {
+    public void load(String path) {
         try {
             DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            Document doc = documentBuilder.parse("res\\data.xml");
+            Document doc = documentBuilder.parse(utf8url(path));
 
             Node root = doc.getDocumentElement();
             NodeList shapes = root.getChildNodes();
